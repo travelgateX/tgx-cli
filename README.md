@@ -1,7 +1,7 @@
 # TravelgateX CLI
 
 [![Python](https://img.shields.io/pypi/pyversions/tgx-cli.svg?maxAge=2592000)](https://pypi.python.org/pypi/tgx-cli)
-[![Travis](https://travis-ci.org/TravelgateX/tgx-cli.svg?branch=master)](https://travis-ci.org//TravelgateX/tgx-cli)
+[![Travis](https://travis-ci.org/TravelgateX/tgx-cli.svg?branch=master)](https://travis-ci.org/travelgateX/tgx-cli)
 [![Slack](https://slack.travelgatex.com/badge.svg)](https://slack.travelgatex.com)
 
 Tool that you can use to manage your TravelgateX platform
