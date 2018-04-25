@@ -27,7 +27,7 @@ class GraphQLClient:
         headers = {'Accept': 'application/json',
                    'Content-Type': 'application/json'}
 
-        if self.token is not None: 
+        if self.token is not None:
             headers['Authorization'] = '{}'.format(self.token)
 
         # print(headers)
@@ -55,7 +55,7 @@ def X1_createOrganization(user,code):
                         code:"CODE_TEMPLATE"
                         template:ORGANIZATION_DEFAULT
                         }){
-                        error{        
+                        error{
                             code
                             type
                             description
@@ -109,14 +109,14 @@ def X2_get_HotelX(code):
         if code.startswith('HotelX_'):
             return code
     return Exception
-        
+
 
 
 def X3_updateGroup(api,code):
     client = GraphQLClient(GRAPH_URL)
     client.inject_token(USER_TOKEN)
     mutation="""mutation{
-                    admin{                        
+                    admin{
                         updateGroup(
                             group:{
                                 api:"API_TEMPLATE"
@@ -191,7 +191,7 @@ def X5_updateMember(code,group,role_resource_tuple):
                         updateMember(member:{
                         code:"CODE_TEMPLATE"
                         group:"GROUP_TEMPLATE"
-                        roles:"ROLE_TEMPLATE" 
+                        roles:"ROLE_TEMPLATE"
                         resource:"RESOURCE_TEMPLATE"
                         method:ADD
                         }){
@@ -243,7 +243,7 @@ def X_create_all(init_user,init_code):
 
     code2=X2_get_HotelX(init_code)
     print("\n\n===========================\nGroup: " + code2)
-    
+
 
     for api in ["entity", "hubgra", "hotlst"]:
         X3_updateGroup(api,code2)
@@ -263,7 +263,7 @@ def X_create_organization(init_user,init_code):
 
     code2=X2_get_HotelX(init_code)
     print("Group: " + code2)
-    
+
 
     for api in ["entity", "hubgra", "hotlst"]:
         X3_updateGroup(api,code2)
@@ -286,8 +286,8 @@ class cli(object):
     def __init__(self):
         parser = argparse.ArgumentParser(
             description='Pretends to be git',
-            usage='''xtg <command> [<args>]
-            The most commonly used xtg commands are:
+            usage='''tgx <command> [<args>]
+            The most commonly used tgx commands are:
             organization     create organization or an organization with apikey
             apikey     create apikey
             ''')
@@ -301,13 +301,13 @@ class cli(object):
             exit(1)
         # use dispatch pattern to invoke method with same name
         getattr(self, args.command)()
-    
+
     def globalize_args(self,args):
         global GRAPH_URL
         global USER_TOKEN
-        GRAPH_URL = args.endpoint        
+        GRAPH_URL = args.endpoint
         USER_TOKEN = args.auth
-        
+
         if args.auth_type in ['ak','apikey']:
             USER_TOKEN = 'Apikey ' + USER_TOKEN
         if args.auth_type in ['br','bearer']:
@@ -315,7 +315,7 @@ class cli(object):
 
         # print(USER_TOKEN)
         # print(GRAPH_URL)
-        
+
     def organization(self):
         def create_all():
             # print("def create_all():")
@@ -340,15 +340,15 @@ class cli(object):
         subparser_create.add_argument('--endpoint', default=None)
         subparser_create.add_argument('--auth', default=None)
         subparser_create.add_argument('--auth_type', default='ak')# Bearer
-        
+
         args = parser.parse_args(sys.argv[2:])
 
         self.globalize_args(args)
-       
+
         if args.command2=='create':
             # print("if args.command2=='create':")
             create()
-        elif args.command2=='create_all': 
+        elif args.command2=='create_all':
             # print("elif args.command2=='create_all':")
             create_all()
         else:
@@ -360,7 +360,7 @@ class cli(object):
 
         parser = argparse.ArgumentParser(
             description='Create Apikey')
-        
+
         subparsers = parser.add_subparsers(dest='command2')
 
         subparser_create = subparsers.add_parser('create', help=create.__doc__)
@@ -368,9 +368,9 @@ class cli(object):
         subparser_create.add_argument('--endpoint', default=None)
         subparser_create.add_argument('--auth', default=None)
         subparser_create.add_argument('--auth_type', default='ak')# Bearer
-        
+
         args = parser.parse_args(sys.argv[2:])
-        
+
         self.globalize_args(args)
 
         if args.command2=='create':
@@ -384,9 +384,3 @@ def main():
 if __name__ == "tgx.tgx":
 # if __name__ == '__main__':
     cli()
-
-
-    
-
-    
-    
