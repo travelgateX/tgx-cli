@@ -10,20 +10,26 @@ Tool that you can use to manage your TravelgateX platform
 ## Installation
 
 
-### Developer Installation (see below)
-
-
 ## Usage
 
 ```bash
-$ tgx [ command ]
+tgx COMMAND
+      Options:
+          --endpoint              Gateway endpoint.
+          --auth_type             ak or apikey, br or bearer
+          --auth_type             Auth Token
+
+      Commands:
+          organization            Create organization or an organization with apikey
+          apikey                  Create apikey
+
 ```
 
 ### Get Started
 
-For usage and help content, pass in the `-h` parameter, for example:
+For usage and help content, pass in the `--help` parameter, for example:
 
 ```bash
-$ tgx access -h
-$ tgx org create -h
+$ tgx organization --help
+
 ```
