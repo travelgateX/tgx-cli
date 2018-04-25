@@ -285,13 +285,21 @@ def X_create_apikey(group_code):
 class cli(object):
     def __init__(self):
         parser = argparse.ArgumentParser(
-            description='Pretends to be git',
-            usage='''tgx <command> [<args>]
-            The most commonly used tgx commands are:
-            organization     create organization or an organization with apikey
-            apikey     create apikey
+            description='Tool that you can use to manage your TravelgateX platform',
+            usage='''tgx COMMAND
+            Options:
+                --endpoint              Gateway endpoint.
+                --auth_type             ak or apikey, br or bearer
+                --auth_type             Auth Token
+
+            Commands:
+                organization            Create organization or an organization with apikey
+                apikey                  Create apikey
+
+            --
             ''')
         parser.add_argument('command', help='Subcommand to run')
+
         # parse_args defaults to [1:] for args, but you need to
         # exclude the rest of the args too, or validation will fail
         args = parser.parse_args(sys.argv[1:2])
