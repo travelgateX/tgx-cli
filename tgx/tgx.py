@@ -2,32 +2,10 @@ import json
 from six.moves import urllib
 # import requests
 import argparse
-try:
-    import Bearer
-except:
-    print("\n\n======================================")
-    print("Please config your token to access.")
-    print("In order to do that you can type:")
-    print("python tgx.py config -token eyJ0eXAiOiJKV1QiL....")
-    print("In that point it is needed to substitute eyJ0eXAiOiJKV1QiL.... with your organization token")
-    print("This will create a Bearer.py file containing token=YOUR_TOKEN")
-    print("There is no problem in changing this token manually directly in the file Bearer.py")
-    print("=========================================================================================\n\n")
+import sys
 
-
-MODE=os.environ['CLI_MODE']
-
-
-if MODE=='TEST':
-    GRAPH_URL   = os.environ['GRAPH_URL_DEV']  # SIMPLE API ENDPOINT    
-    
-if MODE=='PROD':
-    GRAPH_URL   = os.environ['GRAPH_URL_PROD']
-    
-try:
-    USER_TOKEN = 'Bearer ' + Bearer.token
-except:
-    pass
+# MODE='TEST'
+MODE='PROD'
 
 class GraphQLClient:
     def __init__(self, endpoint):
@@ -124,6 +102,7 @@ def X2_get_HotelX(code):
         }""".replace('CODE_TPL',code)
 
     result = client.execute(query)
+    print(result)
     edges=result['data']['admin']['organizations']['edges'][0]['node']['organizationData']['children']['edges'][0]['node']['groupData']['children']['edges']
     for edge in edges:
         code=edge['node']['groupData']['code']
@@ -229,11 +208,11 @@ def X5_updateMember(code,group,role_resource_tuple):
     mutation=mutation.replace('RESOURCE_TEMPLATE',role_resource_tuple[1])
     result = client.execute(mutation)
     print('\n===========================================================')
-    print("code: "+code)
+    # print("code: "+code)
     print("group: "+group)
-    print("roles: "+role_resource_tuple[0])
+    print("role: "+role_resource_tuple[0])
     print("resource: "+role_resource_tuple[1])
-    print(result['data']['admin']['updateMember']['code'])
+    print("ApiKey: " + result['data']['admin']['updateMember']['code'])
     print('===========================================================\n')
     return result['data']['admin']['updateMember']['code']
     # return result
@@ -259,11 +238,11 @@ role_resource_list_prod=[('viewer', 'mbr'),
 role_resource_list_dev=[('owner', 'mbr')]
 
 
-def create_all(init_user,init_code):
+def X_create_all(init_user,init_code):
     X1_createOrganization(init_user,init_code)
 
     code2=X2_get_HotelX(init_code)
-    print("Group: " + code2)
+    print("\n\n===========================\nGroup: " + code2)
     
 
     for api in ["entity", "hubgra", "hotlst"]:
@@ -279,7 +258,7 @@ def create_all(init_user,init_code):
             X5_updateMember(code4,code2,role_resource)
 
 
-def create_organization(init_user,init_code):
+def X_create_organization(init_user,init_code):
     X1_createOrganization(init_user,init_code)
 
     code2=X2_get_HotelX(init_code)
@@ -289,7 +268,7 @@ def create_organization(init_user,init_code):
     for api in ["entity", "hubgra", "hotlst"]:
         X3_updateGroup(api,code2)
 
-def create_apikey(group_code):
+def X_create_apikey(group_code):
     code4=X4_createMember(group_code)
 
     if MODE=='TEST':
@@ -300,71 +279,111 @@ def create_apikey(group_code):
             X5_updateMember(code4,group_code,role_resource)
 
 
-def config(token):
-    print("Configurando Bearer...")
-    with open("./Bearer.py","w") as bearer_file:
-        bearer_file.write('token="' + token + '"')
-    print("Configurado Bearer")
 
-def get_token():
-    import login
-    login.main()
+
+
+class cli(object):
+    def __init__(self):
+        parser = argparse.ArgumentParser(
+            description='Pretends to be git',
+            usage='''xtg <command> [<args>]
+            The most commonly used xtg commands are:
+            organization     create organization or an organization with apikey
+            apikey     create apikey
+            ''')
+        parser.add_argument('command', help='Subcommand to run')
+        # parse_args defaults to [1:] for args, but you need to
+        # exclude the rest of the args too, or validation will fail
+        args = parser.parse_args(sys.argv[1:2])
+        if not hasattr(self, args.command):
+            print ('Unrecognized command')
+            parser.print_help()
+            exit(1)
+        # use dispatch pattern to invoke method with same name
+        getattr(self, args.command)()
+    
+    def globalize_args(self,args):
+        global GRAPH_URL
+        global USER_TOKEN
+        GRAPH_URL = args.endpoint        
+        USER_TOKEN = args.auth
+        
+        if args.auth_type in ['ak','apikey']:
+            USER_TOKEN = 'Apikey ' + USER_TOKEN
+        if args.auth_type in ['br','bearer']:
+            USER_TOKEN = 'Bearer ' + USER_TOKEN
+
+        # print(USER_TOKEN)
+        # print(GRAPH_URL)
+        
+    def organization(self):
+        def create_all():
+            # print("def create_all():")
+            X_create_all(args.user,args.organization_code)
+        def create():
+            # print("def create():")
+            X_create_organization(args.user,args.organization_code)
+        parser = argparse.ArgumentParser(
+            description='Create Organization and Apikey or only Organization')
+        subparsers = parser.add_subparsers(dest='command2')
+
+        subparser_create_all = subparsers.add_parser('create_all', help=create_all.__doc__)#organization create_all [CODDE]
+        subparser_create_all.add_argument('--user', default=None)
+        subparser_create_all.add_argument('--organization_code', default=None)#organization create [CODDE]
+        subparser_create_all.add_argument('--endpoint', default=None)
+        subparser_create_all.add_argument('--auth', default=None)
+        subparser_create_all.add_argument('--auth_type', default='ak')# Bearer
+
+        subparser_create = subparsers.add_parser('create', help=create.__doc__)
+        subparser_create.add_argument('--user', default=None)
+        subparser_create.add_argument('--organization_code', default=None)
+        subparser_create.add_argument('--endpoint', default=None)
+        subparser_create.add_argument('--auth', default=None)
+        subparser_create.add_argument('--auth_type', default='ak')# Bearer
+        
+        args = parser.parse_args(sys.argv[2:])
+
+        self.globalize_args(args)
+       
+        if args.command2=='create':
+            # print("if args.command2=='create':")
+            create()
+        elif args.command2=='create_all': 
+            # print("elif args.command2=='create_all':")
+            create_all()
+        else:
+            print("Invalid command")
+
+    def apikey(self):
+        def create():
+            X_create_apikey(args.group_user)
+
+        parser = argparse.ArgumentParser(
+            description='Create Apikey')
+        
+        subparsers = parser.add_subparsers(dest='command2')
+
+        subparser_create = subparsers.add_parser('create', help=create.__doc__)
+        subparser_create.add_argument('--group_user', default=None)
+        subparser_create.add_argument('--endpoint', default=None)
+        subparser_create.add_argument('--auth', default=None)
+        subparser_create.add_argument('--auth_type', default='ak')# Bearer
+        
+        args = parser.parse_args(sys.argv[2:])
+        
+        self.globalize_args(args)
+
+        if args.command2=='create':
+            create()
+        else:
+            print("Invalid command")
 
 def main():
     pass
 
-
 if __name__ == "tgx.tgx":
-# if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description=__doc__,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-
-    subparsers = parser.add_subparsers(dest='command')
-
-
-    subparser_create_all = subparsers.add_parser('create_all', help=create_all.__doc__)
-    subparser_create_all.add_argument('-user', default=None)
-    subparser_create_all.add_argument('-organization_code', default=None)
-
-    subparser_create_organization = subparsers.add_parser('create_organization', help=create_organization.__doc__)
-    subparser_create_organization.add_argument('-user', default=None)
-    subparser_create_organization.add_argument('-organization_code', default=None)
-
-    subparser_create_apike = subparsers.add_parser('create_apikey', help=create_organization.__doc__)
-    subparser_create_apike.add_argument('-group_user', default=None)
-    
-    subparser_config=subparsers.add_parser('config', help=config.__doc__)
-    subparser_config.add_argument('-token', default=None)
-
-    subparser_get_token=subparsers.add_parser('get_token', help=config.__doc__)
-
-    args = parser.parse_args()
-
-    if args.command == 'create_all':
-        create_all(args.user,args.organization_code)
-
-    elif args.command == 'create_organization':
-        create_organization(args.user,args.organization_code)
-
-    elif args.command == 'create_apikey':
-        create_apikey(args.group_user)
-
-    elif args.command == 'config':
-        config(args.token)
-
-    elif args.command == 'get_token':
-        get_token()
-
-    else:
-        print("\nNot operation specified")
-        print("\nPossible options are:")
-        print("=======================")
-        print("python tgx.py config \t-token YOUR_TOKEN")
-        print("\npython tgx.py create_all \t\t-user YOUR_USER \t-organization_code YOUR_ORGANIZATION_CODE")
-        print("python tgx.py create_organization \t-user YOUR_USER \t-organization_code YOUR_ORGANIZATION_CODE")
-        print("python tgx.py create_apikey \t-group_user YOUR_GROUP_USER")
-        print("\npython tgx.py get_token")
+# if __name__ == '__main__':
+    cli()
 
 
     
