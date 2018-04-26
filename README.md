@@ -22,6 +22,7 @@ tgx COMMAND
       Commands:
           organization            Create organization or an organization with apikey
           apikey                  Create apikey
+          configure               Create a file with the credentials and run options
 
 ```
 
@@ -30,6 +31,8 @@ tgx COMMAND
 For usage and help content, pass in the `--help` parameter, for example:
 
 ```bash
-$ tgx organization --help
+$ python main.py organization --help
+$ python main.py organization create_all --user aselma@xmltravelgate.com --organization_code TST221
+$ python main.py configure --mode TEST --endpoint https:// --auth_type br --auth useyourown
 
 ```
