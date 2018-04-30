@@ -16,7 +16,7 @@ class ClientParser(object):
             Options:
                 --endpoint              Gateway endpoint.
                 --auth_type             ak or apikey, br or bearer
-                --auth_type             Auth Token
+                --auth                  Auth Token
 
             Commands:
                 organization            Create organization or an organization with apikey

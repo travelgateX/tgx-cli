@@ -67,8 +67,7 @@ def create_organization(owner, code):
                         }
                         }
                     }
-                }""".replace('USER_TEMPLATE', owner).replace(
-                'CODE_TEMPLATE', code)
+                }""".replace('USER_TEMPLATE', owner).replace('CODE_TEMPLATE', code)
 
     print("\n\n==============================\n")
     print("1st step) Creating Organization... \t user: {} \t code: {}".format(
@@ -173,8 +172,7 @@ def update_group(api, code):
                 }""".replace('API_TEMPLATE', api).replace('CODE_TEMPLATE', code)
 
     print("\n------------------------------\n")
-    print("3rd step) Updating Group...\t api: {} \t code: {} ".format(
-    api, code))
+    print("3rd step) Updating Group...\t api: {} \t code: {} ".format(api, code))
     result = client.execute(mutation)
     print(result)
     return result
@@ -290,8 +288,7 @@ def update_member(code, group, role_resource_tuple):
                         }
                         }
                     }
-                }""".replace('CODE_TEMPLATE', code).replace(
-                'GROUP_TEMPLATE', group)
+                }""".replace('CODE_TEMPLATE', code).replace('GROUP_TEMPLATE', group)
     mutation = mutation.replace('ROLE_TEMPLATE', role_resource_tuple[0])
     mutation = mutation.replace('RESOURCE_TEMPLATE', role_resource_tuple[1])
     result = client.execute(mutation)
