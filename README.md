@@ -20,7 +20,7 @@ tgx COMMAND
       Options:
           --endpoint              Gateway endpoint.
           --auth_type             ak or apikey, br or bearer
-          --auth_type             Auth Token
+          --auth                  Auth Token
 
       Commands:
           organization            Create organization or an organization with apikey
@@ -34,8 +34,8 @@ tgx COMMAND
 For usage and help content, pass in the `--help` parameter, for example:
 
 ```bash
-$ python main.py organization --help
-$ python main.py organization create_all --user aselma@xmltravelgate.com --organization_code TST221
-$ python main.py configure --mode TEST --endpoint https:// --auth_type br --auth useyourown
+$ tgx organization --help
+$ tgx configure --mode TEST --endpoint https:// --auth_type br --auth useyourown
+$ tgx organization create_all --user user@mail.com --organization_code XXX
 
 ```
