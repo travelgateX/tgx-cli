@@ -30,7 +30,8 @@ class GraphQLClient:
         if self.token is not None:
             headers['Authorization'] = '{}'.format(self.token)
 
-        req = urllib.request.Request(self.endpoint, json.dumps(data).encode('utf-8'), headers)
+        req = urllib.request.Request(
+            self.endpoint, json.dumps(data).encode('utf-8'), headers)
 
         try:
             response = urllib.request.urlopen(req)
@@ -59,17 +60,19 @@ def create_organization(owner, code):
                         code:"CODE_TEMPLATE"
                         template:ORGANIZATION_DEFAULT
                         }){
-                        error{        
+                        error{
                             code
                             type
                             description
                         }
                         }
                     }
-                }""".replace('USER_TEMPLATE', owner).replace('CODE_TEMPLATE', code)
+                }""".replace('USER_TEMPLATE', owner).replace(
+                'CODE_TEMPLATE', code)
 
     print("\n\n==============================\n")
-    print("1st step) Creating Organization... \t user: {} \t code: {}".format(owner, code))
+    print("1st step) Creating Organization... \t user: {} \t code: {}".format(
+        owner, code))
     result = client.execute(mutation)
     print(result)
     error = result['data']['admin']['createOrganization']['error']
@@ -125,7 +128,8 @@ def get_hotel(code):
 
     try:
         edges = result['data']['admin']['organizations']['edges'][0]['node'][
-            'organizationData']['children']['edges'][0]['node']['groupData']['children']['edges']
+            'organizationData']['children']['edges'][0]['node']['groupData'][
+            'children']['edges']
         for edge in edges:
             code = edge['node']['groupData']['code']
             if code.startswith('HotelX_'):
@@ -150,7 +154,7 @@ def update_group(api, code):
     client = GraphQLClient(GRAPH_URL)
     client.inject_token(USER_TOKEN)
     mutation = """mutation{
-                    admin{                        
+                    admin{
                         updateGroup(
                             group:{
                                 api:"API_TEMPLATE"
@@ -169,7 +173,8 @@ def update_group(api, code):
                 }""".replace('API_TEMPLATE', api).replace('CODE_TEMPLATE', code)
 
     print("\n------------------------------\n")
-    print("3rd step) Updating Group...\t api: {} \t code: {} ".format(api, code))
+    print("3rd step) Updating Group...\t api: {} \t code: {} ".format(
+    api, code))
     result = client.execute(mutation)
     print(result)
     return result
@@ -273,7 +278,7 @@ def update_member(code, group, role_resource_tuple):
                         updateMember(member:{
                         code:"CODE_TEMPLATE"
                         group:"GROUP_TEMPLATE"
-                        roles:"ROLE_TEMPLATE" 
+                        roles:"ROLE_TEMPLATE"
                         resource:"RESOURCE_TEMPLATE"
                         method:ADD
                         }){
@@ -285,7 +290,8 @@ def update_member(code, group, role_resource_tuple):
                         }
                         }
                     }
-                }""".replace('CODE_TEMPLATE', code).replace('GROUP_TEMPLATE', group)
+                }""".replace('CODE_TEMPLATE', code).replace(
+                'GROUP_TEMPLATE', group)
     mutation = mutation.replace('ROLE_TEMPLATE', role_resource_tuple[0])
     mutation = mutation.replace('RESOURCE_TEMPLATE', role_resource_tuple[1])
     result = client.execute(mutation)
@@ -331,7 +337,7 @@ role_resource_list_dev = [('owner', 'mbr')]
 
 
 def init_create_all(init_owner, init_code):
-    """ Function to create all the permissions on an owner on a new organization.
+    """Function to create all the permissions on an owner on a new organization.
 
     :param init_owner: Email of the owner
     :param init_code: Code of the organization
@@ -380,4 +386,3 @@ def init_create_apikey(group_code):
     else:  # MODE == TEST
         for role_resource in role_resource_list_dev:
             return update_member(code4, group_code, role_resource)
-

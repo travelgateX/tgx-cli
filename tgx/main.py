@@ -8,6 +8,7 @@ class ClientParser(object):
 
         Parse_args defaults to [1:] for args, but you need to exclude the rest of the args too, or validation will fail
     """
+
     def __init__(self):
         parser = argparse.ArgumentParser(
             description='Tool that you can use to manage your TravelgateX platform',
@@ -20,7 +21,7 @@ class ClientParser(object):
             Commands:
                 organization            Create organization or an organization with apikey
                 apikey                  Create apikey
-                configure               Configure the access data   
+                configure               Configure the access data
 
             --
             ''')
@@ -39,9 +40,11 @@ class ClientParser(object):
         def create():
             tgx.init_create_organization(args.user, args.organization_code)
 
-        parser = argparse.ArgumentParser(description='Create Organization and Apikey or only Organization')
+        parser = argparse.ArgumentParser(
+            description='Create Organization and Apikey or only Organization')
         subparsers = parser.add_subparsers(dest='command2')
-        subparser_create_all = subparsers.add_parser('create_all', help=create_all.__doc__)
+        subparser_create_all = subparsers.add_parser(
+            'create_all', help=create_all.__doc__)
         subparser_create_all.add_argument('--user', default=None)
         subparser_create_all.add_argument('--organization_code', default=None)
         subparser_create = subparsers.add_parser('create', help=create.__doc__)
@@ -58,7 +61,8 @@ class ClientParser(object):
             print("Invalid command")
 
     def configure(self):
-        parser = argparse.ArgumentParser(description='Configure access to GraphQL')
+        parser = argparse.ArgumentParser(
+            description='Configure access to GraphQL')
         parser.add_argument("--mode", default='TEST')
         parser.add_argument("--endpoint")
         parser.add_argument("--auth")

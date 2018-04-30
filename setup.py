@@ -45,7 +45,7 @@ setup(
     # This is a one-line description or tagline of what your project does. This
     # corresponds to the "Summary" metadata field:
     # https://packaging.python.org/specifications/core-metadata/#summary
-    description='Tool that you can use to manage your TravelgateX platform',  # Required
+    description='Tool that you can use to manage your TravelgateX platform',
 
     # This is an optional longer description of your project that represents
     # the body of text which users will see when they visit PyPI.
@@ -99,7 +99,7 @@ setup(
         'Topic :: Software Development :: Build Tools',
 
         # Pick your license as you wish
-        'License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)',
+        'License :: OSI Approved :: GNU General Public License v3 (GPLv3)',
 
         # Specify the Python versions you support here. In particular, ensure
         # that you indicate whether you support Python 2, Python 3 or both.
