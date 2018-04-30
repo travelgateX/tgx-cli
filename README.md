@@ -9,6 +9,9 @@ Tool that you can use to manage your TravelgateX platform
 
 ## Installation
 
+```bash
+pip install tgx-cli
+```
 
 ## Usage
 
